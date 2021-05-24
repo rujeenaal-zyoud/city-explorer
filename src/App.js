@@ -3,7 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import { Form,Button } from 'react-bootstrap/';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Weather from './Component/Weather';
 
 class App extends React.Component {
 
@@ -15,6 +15,7 @@ class App extends React.Component {
       //now create array that we want up date using state
       search: '',
       locData: '',
+      weatherData:[],
       errorMessage: false
 
     }
@@ -27,11 +28,12 @@ class App extends React.Component {
 
     let locUrl = `https://eu1.locationiq.com/v1/search.php?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&q=${this.state.search}&format=json`;
     //loResult will get request using axios
-
+let weatUrl =`${serverRouter}/`
     try{  let locResult = await axios.get(locUrl);
-
+const weatherItem =await axios.get(weatUrl)
       //know we want last state that we have 
       this.setState({
+        weatherData:weatherItem.data[0],
         locData: locResult.data[0],
         displayMap: true,
   
