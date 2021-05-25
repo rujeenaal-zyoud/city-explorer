@@ -32,7 +32,6 @@ class App extends React.Component {
     let locUrl = `https://eu1.locationiq.com/v1/search.php?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&q=${this.state.search}&format=json`;
     //loResult will get request using axios
     //for backend stuff
-    let serverRouter =process.env.REACT_APP_SERVER;
     try {
       let locResult = await axios.get(locUrl);
       //know we want last state that we have 
