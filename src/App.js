@@ -1,10 +1,10 @@
 // import './App.css';
 import React from 'react';
 import axios from 'axios';
-import { Form,Button } from 'react-bootstrap/';
+import { Form, Button } from 'react-bootstrap/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Weather from './Component/Weather';
-
+//import dotenv from 'dotenv';
 class App extends React.Component {
 
   constructor(props) {
@@ -15,8 +15,11 @@ class App extends React.Component {
       //now create array that we want up date using state
       search: '',
       locData: '',
-      weatherData:[],
-      errorMessage: false
+      weatherData: {},
+      errorMessage: false,
+      displayWeather: false,
+     lon: '',
+      lat: '',
 
     }
   }
@@ -28,30 +31,31 @@ class App extends React.Component {
 
     let locUrl = `https://eu1.locationiq.com/v1/search.php?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&q=${this.state.search}&format=json`;
     //loResult will get request using axios
-let weatUrl =`${serverRouter}/`
-    try{  let locResult = await axios.get(locUrl);
-const weatherItem =await axios.get(weatUrl)
+    //for backend stuff
+    let serverRouter =process.env.REACT_APP_SERVER;
+    try {
+      let locResult = await axios.get(locUrl);
       //know we want last state that we have 
       this.setState({
-        weatherData:weatherItem.data[0],
+        //weatherData: weatherItem.data[0],
         locData: locResult.data[0],
         displayMap: true,
-  
+
       })
       console.log(this.state.locData);
-  }
-  catch{
-    this.setState({
-      displayMap:false,
-      errorMessage: true,
-    })
-  }
-  
+    }
+    catch {
+      this.setState({
+        displayMap: false,
+        errorMessage: true,
+      })
+    }
+
   }
 
   updateSearch = (event) => {
     console.log(this.state.search);
-     console.log(event.target);
+    console.log(event.target);
     this.setState({
       search: event.target.value
     })
@@ -69,12 +73,12 @@ const weatherItem =await axios.get(weatUrl)
         { <Form onSubmit={this.getLoction}>
           <Form.Group controlId="formBasicEmail">
             <Form.Label>add a city</Form.Label>
-            <Form.Control  onChange={this.updateSearch} type="text" placeholder="add a city"  custom/>
+            <Form.Control onChange={this.updateSearch} type="text" placeholder="add a city" custom />
             <Button variant="primary" type="submit" >
               Explore
             </Button>
           </Form.Group>
-        </Form> }
+        </Form>}
         <p>{this.state.locData.display_name}</p>
         <p>{this.state.locData.lon}</p>
         <p>{this.state.locData.lat}</p>
@@ -85,14 +89,17 @@ const weatherItem =await axios.get(weatUrl)
             src={`https://maps.locationiq.com/v3/staticmap?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&center=${this.state.locData.lat},${this.state.locData.lon}`} alt=''
           />
         }
-          {this.state.errorMessage &&
-            <p>error in receving the data</p>
-          }
+        {this.state.errorMessage &&
+          <p>error in receving the data</p>
+        }
+       <Weather  search={this.state.search} lat={this.state.locData.lat} lon={this.state.locData.lon}  />
+
       </>
     )
+
   }
 }
 
 export default App;
-// locData is a choisen city 
+// locData is a choisen city
 
