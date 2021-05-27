@@ -15,14 +15,15 @@ class App extends React.Component {
       //now create array that we want up date using state
       search: '',
       locData: '',
-      weatherData: {},
+      weatherData: [],
       errorMessage: false,
-      displayWeather: false,
-     lon: '',
-      lat: '',
+      // displayWeather: false,
+ 
 
     }
   }
+
+
   //here i will use a async in order to wait the complier to complete all senetnse of code to do'nt make undefind in console 
   //This function will do the request from web and stor the data in varible in order that is response
 
@@ -31,14 +32,15 @@ class App extends React.Component {
 
     let locUrl = `https://eu1.locationiq.com/v1/search.php?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&q=${this.state.search}&format=json`;
     //loResult will get request using axios
-    //for backend stuff
+    
     try {
+
       let locResult = await axios.get(locUrl);
       //know we want last state that we have 
       this.setState({
-        //weatherData: weatherItem.data[0],
         locData: locResult.data[0],
         displayMap: true,
+
 
       })
       console.log(this.state.locData);
@@ -49,8 +51,17 @@ class App extends React.Component {
         errorMessage: true,
       })
     }
-
+    this.weatherDataCity();
   }
+  weatherDataCity=async()=>{
+    let serverRoute = process.env.REACT_APP_SERVER;
+    const url = `${serverRoute}/weather?city_name=${this.state.search}`;
+    const weatherItem = await axios.get(url)
+    this.setState({
+      weatherData:weatherItem.data
+
+      })
+    }
 
   updateSearch = (event) => {
     console.log(this.state.search);
@@ -60,14 +71,12 @@ class App extends React.Component {
     })
     console.log(this.state.search);
   }
+
+
   render() {
     return (
       <>
         <h1>city Explorer</h1>
-        {/* { <form onSubmit ={this.getLoction}>
-         <input type ='text' placeholder='add a city' onChange={this.updateSearch}/>
-         <input type ='submit' value = 'Explore!'/>
-         </form> } */}
 
         { <Form onSubmit={this.getLoction}>
           <Form.Group controlId="formBasicEmail">
@@ -90,8 +99,18 @@ class App extends React.Component {
         }
         {this.state.errorMessage &&
           <p>error in receving the data</p>
-        }
-       <Weather  search={this.state.search} lat={this.state.locData.lat} lon={this.state.locData.lon}  />
+  }
+    
+{console.log(this.state.weatherData,'dgvdhffkjnf')}
+        {this.state.weatherData.map((element,idx) =>{
+      return(
+        <Weather  key={idx}   date={element.date}
+        descrption={element.descrption}
+           />
+)
+        }) }
+        
+  
 
       </>
     )
