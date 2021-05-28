@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Form, Button } from 'react-bootstrap/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Weather from './Component/Weather';
+import Movies from './Component/Movies'
 //import dotenv from 'dotenv';
 class App extends React.Component {
 
@@ -16,23 +17,21 @@ class App extends React.Component {
       search: '',
       locData: '',
       weatherData: [],
+      MoivesDataArr :[],
       errorMessage: false,
       // displayWeather: false,
- 
+
 
     }
   }
 
-
-  //here i will use a async in order to wait the complier to complete all senetnse of code to do'nt make undefind in console 
-  //This function will do the request from web and stor the data in varible in order that is response
 
   getLoction = async (e) => {
     e.preventDefault();
 
     let locUrl = `https://eu1.locationiq.com/v1/search.php?key=pk.b6a5cec0e0fa9b2e067c90ea37e22aee&q=${this.state.search}&format=json`;
     //loResult will get request using axios
-    
+
     try {
 
       let locResult = await axios.get(locUrl);
@@ -52,16 +51,27 @@ class App extends React.Component {
       })
     }
     this.weatherDataCity();
+    this.MoivesData();
   }
-  weatherDataCity=async()=>{
+  weatherDataCity = async () => {
     let serverRoute = process.env.REACT_APP_SERVER;
     const url = `${serverRoute}/weather?city_name=${this.state.search}`;
     const weatherItem = await axios.get(url)
     this.setState({
-      weatherData:weatherItem.data
+      weatherData: weatherItem.data
 
-      })
-    }
+    })
+  }
+
+  MoivesData = async () => {
+    let serverRouteMoive = process.env.REACT_APP_SERVER;
+    const urlM = `${serverRouteMoive}/movies?query=${this.state.search}`;
+    const MoivesReq = await axios.get(urlM)
+    this.setState({
+      MoivesDataArr: MoivesReq.data
+
+    })
+  }
 
   updateSearch = (event) => {
     console.log(this.state.search);
@@ -99,19 +109,32 @@ class App extends React.Component {
         }
         {this.state.errorMessage &&
           <p>error in receving the data</p>
-  }
-    
-{console.log(this.state.weatherData,'dgvdhffkjnf')}
-        {this.state.weatherData.map((element,idx) =>{
-      return(
-        <Weather  key={idx}   date={element.date}
-        descrption={element.descrption}
-           />
-)
-        }) }
-        
-  
+        }
 
+        {console.log(this.state.weatherData, 'in consoleloge-tocheck')}
+
+        {this.state.weatherData.map((element, idx) => {
+          return (
+            <Weather key={idx} date={element.date}
+              descrption={element.descrption}
+            />
+          )
+        })}
+
+
+        {this.state.MoivesDataArr.map((element, idx) => {
+          return (
+            <Movies key={idx}
+              original_title={element.original_title}
+              overview={element.overview}
+              vote_average={element.vote_average}
+              vote_count={element.vote_count}
+              // poster_path={element.poster_path}
+              popularity={element.popularity}
+              release_date={element.release_date}
+            />
+          )
+        })}
       </>
     )
 
