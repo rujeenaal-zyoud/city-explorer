@@ -111,9 +111,12 @@ class App extends React.Component {
           <p>error in receving the data</p>
         }
 
-        {console.log(this.state.weatherData, 'in consoleloge-tocheck')}
+
+
 
         {this.state.weatherData.map((element, idx) => {
+          
+        
           return (
             <Weather key={idx} date={element.date}
               descrption={element.descrption}
